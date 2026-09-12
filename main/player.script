@@ -4,11 +4,15 @@ local ACTION_UP = hash("up")
 local ACTION_DOWN = hash("down")
 local ACTION_LEFT = hash("left")
 local ACTION_RIGHT = hash("right")
+local ACTION_INTERACT = hash("interact")
+local MSG_JOYSTICK = hash("joystick")
+local MSG_INTERACT = hash("interact")
 local CONTACT_POINT_RESPONSE = hash("contact_point_response")
 
 function init(self)
 	msg.post(".", "acquire_input_focus")
 	self.keys = { up = false, down = false, left = false, right = false }
+	self.joy = vmath.vector3() -- direction from the touch HUD, zero when idle
 	self.dir = vmath.vector3()
 	-- Accumulated collision correction for this frame. Kinematic bodies are not
 	-- resolved by the engine, so the script pushes itself out of walls.
@@ -18,6 +22,9 @@ end
 function update(self, dt)
 	self.correction = vmath.vector3()
 	self.dir = movement.direction(self.keys.up, self.keys.down, self.keys.left, self.keys.right)
+	if vmath.length_sqr(self.dir) == 0 then
+		self.dir = self.joy
+	end
 	if vmath.length_sqr(self.dir) > 0 then
 		go.set_position(movement.step(go.get_position(), self.dir, dt))
 	end
@@ -34,9 +41,17 @@ local function handle_contact(self, message)
 	end
 end
 
+-- Interaction dispatch arrives in Phase 4. Keyboard E and the HUD button both land here.
+local function interact(self)
+end
+
 function on_message(self, message_id, message, sender)
 	if message_id == CONTACT_POINT_RESPONSE then
 		handle_contact(self, message)
+	elseif message_id == MSG_JOYSTICK then
+		self.joy = vmath.vector3(message.x, message.y, 0)
+	elseif message_id == MSG_INTERACT then
+		interact(self)
 	end
 end
 
@@ -58,5 +73,7 @@ function on_input(self, action_id, action)
 		set_key(self, "left", action)
 	elseif action_id == ACTION_RIGHT then
 		set_key(self, "right", action)
+	elseif action_id == ACTION_INTERACT and action.pressed then
+		interact(self)
 	end
 end

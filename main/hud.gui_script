@@ -1,0 +1,113 @@
+-- Touch HUD: a virtual joystick on the lower left and one action button on the lower right.
+-- The joystick posts a direction to the player; the button posts "interact". The button is
+-- hidden until the interaction system sends show_prompt, so it doubles as the prompt.
+
+local PLAYER = "/player#script"
+
+local TOUCH = hash("touch")
+local TOUCH_MULTI = hash("touch_multi")
+local SHOW_PROMPT = hash("show_prompt")
+local HIDE_PROMPT = hash("hide_prompt")
+
+local MOUSE_ID = "mouse"
+local KNOB_TRAVEL = 60 -- max knob offset from the base centre, in gui units
+local DEAD_ZONE = 0.15 -- fraction of KNOB_TRAVEL below which no movement is sent
+
+function init(self)
+	msg.post(".", "acquire_input_focus")
+	self.base = gui.get_node("joystick_base")
+	self.knob = gui.get_node("joystick_knob")
+	self.button = gui.get_node("action_button")
+	self.label = gui.get_node("action_label")
+	self.base_pos = gui.get_position(self.base)
+	self.joy_id = nil -- id of the pointer currently driving the joystick
+	self.dir = vmath.vector3()
+	self.multitouch = false -- set once a TOUCH_MULTI action is seen; then plain "touch" is ignored
+	gui.set_enabled(self.button, false)
+end
+
+local function send_dir(self, dir)
+	if dir.x ~= self.dir.x or dir.y ~= self.dir.y then
+		self.dir = dir
+		msg.post(PLAYER, "joystick", { x = dir.x, y = dir.y })
+	end
+end
+
+local function joystick_update(self, x, y)
+	local offset = vmath.vector3(x, y, 0) - self.base_pos
+	local len = vmath.length(offset)
+	if len > KNOB_TRAVEL then
+		offset = offset * (KNOB_TRAVEL / len)
+		len = KNOB_TRAVEL
+	end
+	gui.set_position(self.knob, self.base_pos + offset)
+	if len / KNOB_TRAVEL < DEAD_ZONE then
+		send_dir(self, vmath.vector3())
+	else
+		send_dir(self, vmath.normalize(offset))
+	end
+end
+
+local function joystick_release(self)
+	self.joy_id = nil
+	gui.set_position(self.knob, self.base_pos)
+	send_dir(self, vmath.vector3())
+end
+
+-- Any press on the lower-left part of the screen grabs the joystick, not just the base itself.
+local function in_joystick_zone(x, y)
+	return x < gui.get_width() * 0.45 and y < gui.get_height() * 0.75
+end
+
+-- Handles one pointer (a finger or the mouse). Returns true if the HUD consumed it.
+local function handle_pointer(self, id, x, y, pressed, released)
+	if self.joy_id == id then
+		if released then
+			joystick_release(self)
+		else
+			joystick_update(self, x, y)
+		end
+		return true
+	end
+	if pressed then
+		if gui.is_enabled(self.button) and gui.pick_node(self.button, x, y) then
+			msg.post(PLAYER, "interact")
+			return true
+		end
+		if self.joy_id == nil and in_joystick_zone(x, y) then
+			self.joy_id = id
+			joystick_update(self, x, y)
+			return true
+		end
+	end
+	return false
+end
+
+function on_input(self, action_id, action)
+	if action_id == TOUCH_MULTI then
+		if not self.multitouch then
+			self.multitouch = true
+			if self.joy_id == MOUSE_ID then
+				joystick_release(self)
+			end
+		end
+		local consumed = false
+		for _, t in ipairs(action.touch) do
+			if handle_pointer(self, t.id, t.x, t.y, t.pressed, t.released) then
+				consumed = true
+			end
+		end
+		return consumed
+	elseif action_id == TOUCH and not self.multitouch then
+		return handle_pointer(self, MOUSE_ID, action.x, action.y, action.pressed, action.released)
+	end
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == SHOW_PROMPT then
+		gui.set_text(self.label, message.text or "Interact")
+		gui.set_enabled(self.button, true)
+	elseif message_id == HIDE_PROMPT then
+		gui.set_enabled(self.button, false)
+	end
+end
