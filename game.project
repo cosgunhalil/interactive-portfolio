@@ -13,7 +13,7 @@ high_dpi = 1
 input_method = HiddenInputField
 
 [physics]
-gravity_y = -1000.0
+gravity_y = 0.0
 scale = 0.01
 
 [html5]
