@@ -1,5 +1,5 @@
 --- DOM overlay above the game canvas, driven through html5.run().
--- Videos use the real YouTube player. Links show a card with an "open in new tab" anchor,
+-- Videos and playlists use the real YouTube player (a playlist embed plays the whole series). Links show a card with an "open in new tab" anchor,
 -- because most sites refuse to be iframed. Text shows a card.
 -- Closes on backdrop click, Escape, or the close button; JS sets window.__tw_overlay_open
 -- to false and Lua polls it in update() to restore input.
@@ -21,9 +21,11 @@ local JS = [==[
 		'align-items:center;justify-content:center;z-index:9999;';
 
 	var panel;
-	if (d.type === 'video') {
+	if (d.type === 'video' || d.type === 'playlist') {
 		panel = document.createElement('iframe');
-		panel.src = 'https://www.youtube-nocookie.com/embed/' + encodeURIComponent(d.payload) + '?autoplay=1&rel=0';
+		panel.src = d.type === 'video'
+			? 'https://www.youtube-nocookie.com/embed/' + encodeURIComponent(d.payload) + '?autoplay=1&rel=0'
+			: 'https://www.youtube-nocookie.com/embed/videoseries?list=' + encodeURIComponent(d.payload) + '&autoplay=1&rel=0';
 		panel.style.cssText = 'width:90%;max-width:900px;aspect-ratio:16/9;border:0;background:#000;';
 		panel.allow = 'autoplay; fullscreen; picture-in-picture';
 		panel.allowFullscreen = true;

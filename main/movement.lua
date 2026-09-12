@@ -3,7 +3,7 @@
 local M = {}
 
 --- Player speed in pixels per second.
-M.SPEED = 260
+M.SPEED = 80
 
 --- Build a direction vector from four boolean axes.
 -- @return vector3 unit-length or zero

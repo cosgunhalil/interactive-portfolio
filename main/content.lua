@@ -3,20 +3,29 @@
 -- collection whose `content` property names a key. No new code.
 --
 -- Fields:
---   type    "video" (payload = YouTube id), "link" (payload = URL), or "text" (payload = body text)
+--   type    "video" (payload = YouTube video id), "playlist" (payload = YouTube playlist id),
+--           "link" (payload = URL), or "text" (payload = body text)
 --   prompt  label shown on the action button / prompt when the player is in range
 --   title   heading shown on link and text cards (defaults to prompt)
---   color   optional sprite tint for the placeholder square
+--   anim    animation id in assets/tiny_dungeon.tilesource used for the object's sprite
 local M = {}
 
 M.items = {
+	-- "Sunumlar": all presentations and webinars, as one playlist so new uploads appear automatically.
 	[hash("talks_monitor")] = {
-		type = "video",
-		prompt = "Watch the talk",
-		title = "Talks",
-		-- TODO: replace with the id of a real talk. This is a placeholder video that allows embedding.
-		payload = "M7lc1UVf-VE",
-		color = vmath.vector4(0.22, 0.64, 0.89, 1),
+		type = "playlist",
+		prompt = "Watch the talks",
+		title = "Sunumlar",
+		payload = "PLq-FKoPCrDxWf3UukjCPelX8ZjnoZTOgm",
+		anim = "monitor",
+	},
+	-- "Zaten Her Şey Sıfır Bir": podcast, season one.
+	[hash("podcast_radio")] = {
+		type = "playlist",
+		prompt = "Listen to the podcast",
+		title = "Zaten Her Şey Sıfır Bir",
+		payload = "PLq-FKoPCrDxU13_PF_5OG464XkPvfIbsN",
+		anim = "podcast",
 	},
 	[hash("spawn_sign")] = {
 		type = "text",
@@ -24,8 +33,8 @@ M.items = {
 		title = "Welcome",
 		payload = "This is an interactive portfolio.\n\n"
 			.. "Walk up to things and press E, or tap Interact, to open them.\n"
-			.. "The blue screen over there plays a talk.",
-		color = vmath.vector4(0.93, 0.78, 0.3, 1),
+			.. "The screen on the right plays the talks; the framed box on the left plays the podcast.",
+		anim = "sign",
 	},
 }
 

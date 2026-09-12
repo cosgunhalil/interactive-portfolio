@@ -43,15 +43,15 @@ instances {
   id: "talks_monitor"
   prototype: "/main/interactable.go"
   position {
-    x: 320.0
-    y: 120.0
+    x: 96.0
+    y: 40.0
     z: 0.05
   }
   rotation {
   }
   scale3 {
-    x: 2.5
-    y: 2.5
+    x: 1.0
+    y: 1.0
     z: 1.0
   }
   component_properties {
@@ -63,7 +63,36 @@ instances {
     }
     properties {
       id: "radius"
-      value: "130.0"
+      value: "44.0"
+      type: PROPERTY_TYPE_NUMBER
+    }
+  }
+}
+instances {
+  id: "podcast_radio"
+  prototype: "/main/interactable.go"
+  position {
+    x: -112.0
+    y: 64.0
+    z: 0.05
+  }
+  rotation {
+  }
+  scale3 {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+  }
+  component_properties {
+    id: "script"
+    properties {
+      id: "content"
+      value: "podcast_radio"
+      type: PROPERTY_TYPE_HASH
+    }
+    properties {
+      id: "radius"
+      value: "44.0"
       type: PROPERTY_TYPE_NUMBER
     }
   }
@@ -72,15 +101,15 @@ instances {
   id: "spawn_sign"
   prototype: "/main/interactable.go"
   position {
-    x: -140.0
-    y: 90.0
+    x: -40.0
+    y: 32.0
     z: 0.05
   }
   rotation {
   }
   scale3 {
-    x: 1.5
-    y: 1.5
+    x: 1.0
+    y: 1.0
     z: 1.0
   }
   component_properties {

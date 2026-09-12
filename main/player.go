@@ -5,11 +5,11 @@ components {
 embedded_components {
   id: "sprite"
   type: "sprite"
-  data: "default_animation: \"square\"\n"
+  data: "default_animation: \"player\"\n"
   "material: \"/builtins/materials/sprite.material\"\n"
   "textures {\n"
   "  sampler: \"texture_sampler\"\n"
-  "  texture: \"/assets/main.atlas\"\n"
+  "  texture: \"/assets/tiny_dungeon.tilesource\"\n"
   "}\n"
   ""
 }
@@ -32,8 +32,8 @@ embedded_components {
   "    index: 0\n"
   "    count: 3\n"
   "  }\n"
-  "  data: 16.0\n"
-  "  data: 16.0\n"
+  "  data: 6.0\n"
+  "  data: 6.0\n"
   "  data: 10.0\n"
   "}\n"
   ""
@@ -47,6 +47,6 @@ embedded_components {
   "far_z: 1.0\n"
   "auto_aspect_ratio: 1\n"
   "orthographic_projection: 1\n"
-  "orthographic_zoom: 1.0\n"
+  "orthographic_zoom: 4.0\n"
   ""
 }

@@ -5,4 +5,4 @@ Code is MIT (see `LICENSE`); the entries below cover art, fonts, and audio only.
 
 | Asset | Author | Source | License |
 |---|---|---|---|
-| _none yet_ | | | |
+| Tiny Dungeon 1.0 (tileset, characters, props) | Kenney | https://kenney.nl/assets/tiny-dungeon | CC0 1.0 |

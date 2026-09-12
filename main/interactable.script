@@ -6,7 +6,7 @@ local content = require("main.content")
 local overlay = require("main.overlay")
 
 go.property("content", hash(""))
-go.property("radius", 90)
+go.property("radius", 40)
 
 local PLAYER_GO = "/player"
 local PLAYER_SCRIPT = "/player#script"
@@ -18,8 +18,8 @@ function init(self)
 		print("interactable: no content entry for", go.get_id(), self.content)
 		return
 	end
-	if self.item.color then
-		go.set("#sprite", "tint", self.item.color)
+	if self.item.anim then
+		sprite.play_flipbook("#sprite", self.item.anim)
 	end
 	self.near = false
 end

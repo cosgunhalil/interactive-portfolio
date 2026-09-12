@@ -5,11 +5,11 @@ components {
 embedded_components {
   id: "sprite"
   type: "sprite"
-  data: "default_animation: \"square\"\n"
+  data: "default_animation: \"monitor\"\n"
   "material: \"/builtins/materials/sprite.material\"\n"
   "textures {\n"
   "  sampler: \"texture_sampler\"\n"
-  "  texture: \"/assets/main.atlas\"\n"
+  "  texture: \"/assets/tiny_dungeon.tilesource\"\n"
   "}\n"
   ""
 }
