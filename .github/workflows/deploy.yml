@@ -1,0 +1,72 @@
+name: Build and deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+env:
+  # Pinned to the editor/engine version the project is developed with (Defold 1.13.1).
+  DEFOLD_VERSION: 1.13.1
+  DEFOLD_SHA1: 574678c7d44be490d874fbed2d0ae6211feec4d9
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Cache bob.jar
+        id: bob-cache
+        uses: actions/cache@v4
+        with:
+          path: bob.jar
+          key: bob-${{ env.DEFOLD_SHA1 }}
+
+      - name: Download bob.jar
+        if: steps.bob-cache.outputs.cache-hit != 'true'
+        run: curl -fL -o bob.jar "https://d.defold.com/archive/stable/${DEFOLD_SHA1}/bob/bob.jar"
+
+      - name: Build HTML5 bundle
+        run: |
+          java -jar bob.jar --version
+          java -jar bob.jar \
+            --platform wasm-web \
+            --architectures wasm-web \
+            --archive \
+            --variant release \
+            --bundle-output dist \
+            resolve build bundle
+          ls -R dist
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist/interactive-portfolio
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4

@@ -1,0 +1,13 @@
+/.editor_settings
+/.internal
+/build
+/dist
+/bob.jar
+.externalToolBuilders
+.DS_Store
+Thumbs.db
+.lock-wscript
+*.pyc
+.project
+.cproject
+builtins
