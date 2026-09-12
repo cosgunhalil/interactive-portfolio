@@ -1,0 +1,47 @@
+-- Generic interactable. Its `content` property names an entry in main/content.lua.
+-- Each frame it checks the distance to the player and tells the player when it enters or
+-- leaves range. When the player activates it, it opens the overlay for its content item.
+
+local content = require("main.content")
+local overlay = require("main.overlay")
+
+go.property("content", hash(""))
+go.property("radius", 90)
+
+local PLAYER_GO = "/player"
+local PLAYER_SCRIPT = "/player#script"
+local MSG_ACTIVATE = hash("activate")
+
+function init(self)
+	self.item = content.get(self.content)
+	if not self.item then
+		print("interactable: no content entry for", go.get_id(), self.content)
+		return
+	end
+	if self.item.color then
+		go.set("#sprite", "tint", self.item.color)
+	end
+	self.near = false
+end
+
+function update(self, dt)
+	if not self.item then
+		return
+	end
+	local distance = vmath.length(go.get_position(PLAYER_GO) - go.get_position())
+	local near = distance <= self.radius
+	if near ~= self.near then
+		self.near = near
+		if near then
+			msg.post(PLAYER_SCRIPT, "interact_enter", { prompt = self.item.prompt })
+		else
+			msg.post(PLAYER_SCRIPT, "interact_exit")
+		end
+	end
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == MSG_ACTIVATE and self.item then
+		overlay.open(self.item)
+	end
+end

@@ -39,4 +39,57 @@ instances {
     z: 1.0
   }
 }
+instances {
+  id: "talks_monitor"
+  prototype: "/main/interactable.go"
+  position {
+    x: 320.0
+    y: 120.0
+    z: 0.05
+  }
+  rotation {
+  }
+  scale3 {
+    x: 2.5
+    y: 2.5
+    z: 1.0
+  }
+  component_properties {
+    id: "script"
+    properties {
+      id: "content"
+      value: "talks_monitor"
+      type: PROPERTY_TYPE_HASH
+    }
+    properties {
+      id: "radius"
+      value: "130.0"
+      type: PROPERTY_TYPE_NUMBER
+    }
+  }
+}
+instances {
+  id: "spawn_sign"
+  prototype: "/main/interactable.go"
+  position {
+    x: -140.0
+    y: 90.0
+    z: 0.05
+  }
+  rotation {
+  }
+  scale3 {
+    x: 1.5
+    y: 1.5
+    z: 1.0
+  }
+  component_properties {
+    id: "script"
+    properties {
+      id: "content"
+      value: "spawn_sign"
+      type: PROPERTY_TYPE_HASH
+    }
+  }
+}
 scale_along_z: 0

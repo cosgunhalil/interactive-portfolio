@@ -8,10 +8,12 @@ local TOUCH = hash("touch")
 local TOUCH_MULTI = hash("touch_multi")
 local SHOW_PROMPT = hash("show_prompt")
 local HIDE_PROMPT = hash("hide_prompt")
+local PLAYER_MOVED = hash("player_moved")
 
 local MOUSE_ID = "mouse"
 local KNOB_TRAVEL = 60 -- max knob offset from the base centre, in gui units
 local DEAD_ZONE = 0.15 -- fraction of KNOB_TRAVEL below which no movement is sent
+local HINT_DELAY = 3 -- seconds without movement before the idle hint appears
 
 function init(self)
 	msg.post(".", "acquire_input_focus")
@@ -24,6 +26,19 @@ function init(self)
 	self.dir = vmath.vector3()
 	self.multitouch = false -- set once a TOUCH_MULTI action is seen; then plain "touch" is ignored
 	gui.set_enabled(self.button, false)
+	self.hint = gui.get_node("hint")
+	self.idle = 0
+	self.moved = false
+	gui.set_enabled(self.hint, false)
+end
+
+function update(self, dt)
+	if not self.moved then
+		self.idle = self.idle + dt
+		if self.idle >= HINT_DELAY then
+			gui.set_enabled(self.hint, true)
+		end
+	end
 end
 
 local function send_dir(self, dir)
@@ -109,5 +124,8 @@ function on_message(self, message_id, message, sender)
 		gui.set_enabled(self.button, true)
 	elseif message_id == HIDE_PROMPT then
 		gui.set_enabled(self.button, false)
+	elseif message_id == PLAYER_MOVED then
+		self.moved = true
+		gui.set_enabled(self.hint, false)
 	end
 end

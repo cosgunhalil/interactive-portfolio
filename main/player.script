@@ -1,19 +1,32 @@
 local movement = require("main.movement")
+local overlay = require("main.overlay")
+
+local HUD = "/hud#gui"
 
 local ACTION_UP = hash("up")
 local ACTION_DOWN = hash("down")
 local ACTION_LEFT = hash("left")
 local ACTION_RIGHT = hash("right")
 local ACTION_INTERACT = hash("interact")
+local ACTION_CLOSE = hash("close")
 local MSG_JOYSTICK = hash("joystick")
 local MSG_INTERACT = hash("interact")
+local MSG_INTERACT_ENTER = hash("interact_enter")
+local MSG_INTERACT_EXIT = hash("interact_exit")
 local CONTACT_POINT_RESPONSE = hash("contact_point_response")
+
+local function reset_input(self)
+	self.keys.up, self.keys.down, self.keys.left, self.keys.right = false, false, false, false
+	self.joy = vmath.vector3()
+end
 
 function init(self)
 	msg.post(".", "acquire_input_focus")
-	self.keys = { up = false, down = false, left = false, right = false }
-	self.joy = vmath.vector3() -- direction from the touch HUD, zero when idle
+	self.keys = {}
+	reset_input(self)
 	self.dir = vmath.vector3()
+	self.target = nil -- url of the interactable currently in range
+	self.moved = false -- becomes true on first movement; tells the HUD to drop the idle hint
 	-- Accumulated collision correction for this frame. Kinematic bodies are not
 	-- resolved by the engine, so the script pushes itself out of walls.
 	self.correction = vmath.vector3()
@@ -21,12 +34,22 @@ end
 
 function update(self, dt)
 	self.correction = vmath.vector3()
+	overlay.update()
+	if overlay.is_open() then
+		-- Nothing moves while the visitor is reading or watching.
+		reset_input(self)
+		return
+	end
 	self.dir = movement.direction(self.keys.up, self.keys.down, self.keys.left, self.keys.right)
 	if vmath.length_sqr(self.dir) == 0 then
 		self.dir = self.joy
 	end
 	if vmath.length_sqr(self.dir) > 0 then
 		go.set_position(movement.step(go.get_position(), self.dir, dt))
+		if not self.moved then
+			self.moved = true
+			msg.post(HUD, "player_moved")
+		end
 	end
 end
 
@@ -41,8 +64,12 @@ local function handle_contact(self, message)
 	end
 end
 
--- Interaction dispatch arrives in Phase 4. Keyboard E and the HUD button both land here.
 local function interact(self)
+	if overlay.is_open() or not self.target then
+		return
+	end
+	reset_input(self)
+	msg.post(self.target, "activate")
 end
 
 function on_message(self, message_id, message, sender)
@@ -52,6 +79,14 @@ function on_message(self, message_id, message, sender)
 		self.joy = vmath.vector3(message.x, message.y, 0)
 	elseif message_id == MSG_INTERACT then
 		interact(self)
+	elseif message_id == MSG_INTERACT_ENTER then
+		self.target = sender
+		msg.post(HUD, "show_prompt", { text = message.prompt })
+	elseif message_id == MSG_INTERACT_EXIT then
+		if self.target == sender then
+			self.target = nil
+			msg.post(HUD, "hide_prompt")
+		end
 	end
 end
 
@@ -65,6 +100,15 @@ local function set_key(self, name, action)
 end
 
 function on_input(self, action_id, action)
+	if action_id == ACTION_CLOSE then
+		if action.pressed then
+			overlay.close()
+		end
+		return true
+	end
+	if overlay.is_open() then
+		return true
+	end
 	if action_id == ACTION_UP then
 		set_key(self, "up", action)
 	elseif action_id == ACTION_DOWN then
