@@ -9,11 +9,32 @@ local TOUCH_MULTI = hash("touch_multi")
 local SHOW_PROMPT = hash("show_prompt")
 local HIDE_PROMPT = hash("hide_prompt")
 local PLAYER_MOVED = hash("player_moved")
+local WINDOW_RESIZED = hash("window_resized")
 
 local MOUSE_ID = "mouse"
-local KNOB_TRAVEL = 60 -- max knob offset from the base centre, in gui units
+local KNOB_TRAVEL = 60 -- max knob offset from the base centre, at ui scale 1
+local DESIGN_HEIGHT = 640 -- ui scale 1 corresponds to a 640 px short side
 local DEAD_ZONE = 0.15 -- fraction of KNOB_TRAVEL below which no movement is sent
 local HINT_DELAY = 3 -- seconds without movement before the idle hint appears
+
+-- Positions and sizes are computed from the real window size (the HTML5 canvas follows the
+-- browser window, so portrait phones have a tall, narrow window at device pixel ratio).
+local function layout(self)
+	local w, h = window.get_size()
+	local s = math.max(1, math.min(w, h) / DESIGN_HEIGHT)
+	self.ui_scale = s
+	self.knob_travel = KNOB_TRAVEL * s
+	local margin = 130 * s
+	self.base_pos = vmath.vector3(margin, margin, 0)
+	gui.set_position(self.base, self.base_pos)
+	gui.set_position(self.knob, self.base_pos)
+	gui.set_position(self.button, vmath.vector3(w - 120 * s, margin, 0))
+	gui.set_position(self.hint, vmath.vector3(w / 2, h - 70 * s, 0))
+	gui.set_size(self.hint, vmath.vector3(w / s - 40, 60, 0))
+	for _, node in ipairs({ self.base, self.knob, self.button, self.hint }) do
+		gui.set_scale(node, vmath.vector3(s, s, 1))
+	end
+end
 
 function init(self)
 	msg.post(".", "acquire_input_focus")
@@ -21,12 +42,12 @@ function init(self)
 	self.knob = gui.get_node("joystick_knob")
 	self.button = gui.get_node("action_button")
 	self.label = gui.get_node("action_label")
-	self.base_pos = gui.get_position(self.base)
+	self.hint = gui.get_node("hint")
+	layout(self)
 	self.joy_id = nil -- id of the pointer currently driving the joystick
 	self.dir = vmath.vector3()
 	self.multitouch = false -- set once a TOUCH_MULTI action is seen; then plain "touch" is ignored
 	gui.set_enabled(self.button, false)
-	self.hint = gui.get_node("hint")
 	self.idle = 0
 	self.moved = false
 	gui.set_enabled(self.hint, false)
@@ -51,12 +72,12 @@ end
 local function joystick_update(self, x, y)
 	local offset = vmath.vector3(x, y, 0) - self.base_pos
 	local len = vmath.length(offset)
-	if len > KNOB_TRAVEL then
-		offset = offset * (KNOB_TRAVEL / len)
-		len = KNOB_TRAVEL
+	if len > self.knob_travel then
+		offset = offset * (self.knob_travel / len)
+		len = self.knob_travel
 	end
 	gui.set_position(self.knob, self.base_pos + offset)
-	if len / KNOB_TRAVEL < DEAD_ZONE then
+	if len / self.knob_travel < DEAD_ZONE then
 		send_dir(self, vmath.vector3())
 	else
 		send_dir(self, vmath.normalize(offset))
@@ -71,7 +92,8 @@ end
 
 -- Any press on the lower-left part of the screen grabs the joystick, not just the base itself.
 local function in_joystick_zone(x, y)
-	return x < gui.get_width() * 0.45 and y < gui.get_height() * 0.75
+	local w, h = window.get_size()
+	return x < w * 0.45 and y < h * 0.75
 end
 
 -- Handles one pointer (a finger or the mouse). Returns true if the HUD consumed it.
@@ -127,5 +149,7 @@ function on_message(self, message_id, message, sender)
 	elseif message_id == PLAYER_MOVED then
 		self.moved = true
 		gui.set_enabled(self.hint, false)
+	elseif message_id == WINDOW_RESIZED then
+		layout(self)
 	end
 end

@@ -2,6 +2,8 @@ local movement = require("main.movement")
 local overlay = require("main.overlay")
 
 local HUD = "/hud#gui"
+local CAMERA = "#camera"
+local VIEW_SHORT_SIDE = 176 -- world px (11 tiles) to fit along the window's shorter side
 
 local ACTION_UP = hash("up")
 local ACTION_DOWN = hash("down")
@@ -20,8 +22,22 @@ local function reset_input(self)
 	self.joy = vmath.vector3()
 end
 
+-- Integer zoom keeps pixel art crisp; the shorter window side always shows about 11 tiles,
+-- whatever the device pixel ratio or orientation.
+local function fit_camera(width, height)
+	local zoom = math.max(1, math.floor(math.min(width, height) / VIEW_SHORT_SIDE))
+	go.set(CAMERA, "orthographic_zoom", zoom)
+end
+
 function init(self)
 	msg.post(".", "acquire_input_focus")
+	fit_camera(window.get_size())
+	window.set_listener(function(_, event, data)
+		if event == window.WINDOW_EVENT_RESIZED then
+			fit_camera(data.width, data.height)
+			msg.post(HUD, "window_resized")
+		end
+	end)
 	self.keys = {}
 	reset_input(self)
 	self.dir = vmath.vector3()
