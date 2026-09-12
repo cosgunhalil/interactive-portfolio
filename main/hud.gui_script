@@ -91,12 +91,23 @@ local function joystick_release(self)
 end
 
 -- Any press on the lower-left part of the screen grabs the joystick, not just the base itself.
+-- NOTE: action.x/y are scaled to the game.project display size; screen_x/screen_y are real
+-- window pixels, which is what the layout uses.
 local function in_joystick_zone(x, y)
 	local w, h = window.get_size()
 	return x < w * 0.45 and y < h * 0.75
 end
 
--- Handles one pointer (a finger or the mouse). Returns true if the HUD consumed it.
+-- Window-pixel hit test. gui.pick_node is not used because the layout is done in window
+-- pixels with GUI adjust disabled.
+local function hit(node, x, y)
+	local p = gui.get_position(node)
+	local half = gui.get_size(node) * 0.5
+	local sc = gui.get_scale(node)
+	return math.abs(x - p.x) <= half.x * sc.x and math.abs(y - p.y) <= half.y * sc.y
+end
+
+-- Handles one pointer (a finger or the mouse), in window pixels. Returns true if consumed.
 local function handle_pointer(self, id, x, y, pressed, released)
 	if self.joy_id == id then
 		if released then
@@ -107,7 +118,7 @@ local function handle_pointer(self, id, x, y, pressed, released)
 		return true
 	end
 	if pressed then
-		if gui.is_enabled(self.button) and gui.pick_node(self.button, x, y) then
+		if gui.is_enabled(self.button) and hit(self.button, x, y) then
 			msg.post(PLAYER, "interact")
 			return true
 		end
@@ -130,13 +141,13 @@ function on_input(self, action_id, action)
 		end
 		local consumed = false
 		for _, t in ipairs(action.touch) do
-			if handle_pointer(self, t.id, t.x, t.y, t.pressed, t.released) then
+			if handle_pointer(self, t.id, t.screen_x, t.screen_y, t.pressed, t.released) then
 				consumed = true
 			end
 		end
 		return consumed
 	elseif action_id == TOUCH and not self.multitouch then
-		return handle_pointer(self, MOUSE_ID, action.x, action.y, action.pressed, action.released)
+		return handle_pointer(self, MOUSE_ID, action.screen_x, action.screen_y, action.pressed, action.released)
 	end
 end
 

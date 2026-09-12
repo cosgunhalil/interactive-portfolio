@@ -3,7 +3,7 @@ local overlay = require("main.overlay")
 
 local HUD = "/hud#gui"
 local CAMERA = "#camera"
-local VIEW_SHORT_SIDE = 176 -- world px (11 tiles) to fit along the window's shorter side
+local VIEW_SHORT_SIDE = 256 -- world px (16 tiles) to fit along the window's shorter side
 
 local ACTION_UP = hash("up")
 local ACTION_DOWN = hash("down")
@@ -22,7 +22,7 @@ local function reset_input(self)
 	self.joy = vmath.vector3()
 end
 
--- Integer zoom keeps pixel art crisp; the shorter window side always shows about 11 tiles,
+-- Integer zoom keeps pixel art crisp; the shorter window side always shows about 16 tiles,
 -- whatever the device pixel ratio or orientation.
 local function fit_camera(width, height)
 	local zoom = math.max(1, math.floor(math.min(width, height) / VIEW_SHORT_SIDE))
