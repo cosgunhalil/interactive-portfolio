@@ -1,5 +1,6 @@
 local movement = require("main.movement")
 local overlay = require("main.overlay")
+local rooms = require("main.rooms")
 
 local HUD = "/hud#gui"
 local CAMERA = "#camera"
@@ -20,6 +21,20 @@ local CONTACT_POINT_RESPONSE = hash("contact_point_response")
 local function reset_input(self)
 	self.keys.up, self.keys.down, self.keys.left, self.keys.right = false, false, false, false
 	self.joy = vmath.vector3()
+end
+
+-- Which room rectangle contains the player. Posts room_changed to the HUD on change.
+local function update_room(self)
+	local p = go.get_position()
+	for _, room in ipairs(rooms) do
+		if p.x >= room.x0 and p.x <= room.x1 and p.y >= room.y0 and p.y <= room.y1 then
+			if room.id ~= self.room then
+				self.room = room.id
+				msg.post(HUD, "room_changed", { title = room.title })
+			end
+			return
+		end
+	end
 end
 
 -- Integer zoom keeps pixel art crisp; the shorter window side always shows about 16 tiles,
@@ -43,6 +58,7 @@ function init(self)
 	self.dir = vmath.vector3()
 	self.target = nil -- url of the interactable currently in range
 	self.moved = false -- becomes true on first movement; tells the HUD to drop the idle hint
+	self.room = nil -- id of the room the player is in; the HUD shows a title when it changes
 	-- Accumulated collision correction for this frame. Kinematic bodies are not
 	-- resolved by the engine, so the script pushes itself out of walls.
 	self.correction = vmath.vector3()
@@ -50,6 +66,9 @@ end
 
 function update(self, dt)
 	self.correction = vmath.vector3()
+	if not self.room then
+		update_room(self)
+	end
 	overlay.update()
 	if overlay.is_open() then
 		-- Nothing moves while the visitor is reading or watching.
@@ -62,10 +81,14 @@ function update(self, dt)
 	end
 	if vmath.length_sqr(self.dir) > 0 then
 		go.set_position(movement.step(go.get_position(), self.dir, dt))
+		if self.dir.x ~= 0 then
+			sprite.set_hflip("#sprite", self.dir.x < 0)
+		end
 		if not self.moved then
 			self.moved = true
 			msg.post(HUD, "player_moved")
 		end
+		update_room(self)
 	end
 end
 

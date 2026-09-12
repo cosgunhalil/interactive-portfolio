@@ -10,6 +10,8 @@ local SHOW_PROMPT = hash("show_prompt")
 local HIDE_PROMPT = hash("hide_prompt")
 local PLAYER_MOVED = hash("player_moved")
 local WINDOW_RESIZED = hash("window_resized")
+local ROOM_CHANGED = hash("room_changed")
+local TITLE_HOLD = 2.0 -- seconds the room title stays fully visible before fading
 
 local MOUSE_ID = "mouse"
 local KNOB_TRAVEL = 60 -- max knob offset from the base centre, at ui scale 1
@@ -31,7 +33,8 @@ local function layout(self)
 	gui.set_position(self.button, vmath.vector3(w - 120 * s, margin, 0))
 	gui.set_position(self.hint, vmath.vector3(w / 2, h - 70 * s, 0))
 	gui.set_size(self.hint, vmath.vector3(w / s - 40, 60, 0))
-	for _, node in ipairs({ self.base, self.knob, self.button, self.hint }) do
+	gui.set_position(self.title, vmath.vector3(w / 2, h - 140 * s, 0))
+	for _, node in ipairs({ self.base, self.knob, self.button, self.hint, self.title }) do
 		gui.set_scale(node, vmath.vector3(s, s, 1))
 	end
 end
@@ -43,6 +46,8 @@ function init(self)
 	self.button = gui.get_node("action_button")
 	self.label = gui.get_node("action_label")
 	self.hint = gui.get_node("hint")
+	self.title = gui.get_node("room_title")
+	gui.set_alpha(self.title, 0)
 	layout(self)
 	self.joy_id = nil -- id of the pointer currently driving the joystick
 	self.dir = vmath.vector3()
@@ -162,5 +167,10 @@ function on_message(self, message_id, message, sender)
 		gui.set_enabled(self.hint, false)
 	elseif message_id == WINDOW_RESIZED then
 		layout(self)
+	elseif message_id == ROOM_CHANGED then
+		gui.set_text(self.title, message.title)
+		gui.cancel_animation(self.title, "color.w")
+		gui.set_alpha(self.title, 1)
+		gui.animate(self.title, "color.w", 0, gui.EASING_INQUAD, 0.6, TITLE_HOLD)
 	end
 end
