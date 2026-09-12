@@ -1,7 +1,7 @@
 # Interactive Portfolio
 
 A walkable portfolio built with [Defold](https://defold.com). The visitor controls a character who walks through
-four rooms; each room is a chapter of a career, and interacting with an object opens the real content behind it:
+one room; each object is a chapter of a career, and interacting with it opens the real content behind it:
 talks and a podcast on YouTube, repositories on GitHub, notes from the resume, and contact links.
 
 Live: `https://cosgunhalil.github.io/interactive-portfolio/`
@@ -13,14 +13,20 @@ Live: `https://cosgunhalil.github.io/interactive-portfolio/`
 | Desktop | WASD or arrow keys | E | Esc, ✕, or click outside |
 | Mobile | Virtual joystick (lower left) | Action button (lower right) | ✕ button |
 
-## Rooms
+## The room
 
-| Room | Position | Content |
-|---|---|---|
-| Talks & Podcast | spawn, bottom-left | presentations playlist, podcast playlist, welcome sign |
-| Open Source | bottom-right | Tickwise, Jotphant, HannibalUI, Design Patterns, GitHub profile |
-| Games | top-left | Head Ball 2, Basketball Arena, Unity years |
-| About & Contact | top-right | bio, LinkedIn, website, email |
+One room, six things to walk up to:
+
+| Object | Opens |
+|---|---|
+| Notice board | welcome and how to play |
+| Screen | presentations playlist (YouTube) |
+| Framed box | podcast playlist (YouTube) |
+| Chest | open source card: repositories on GitHub |
+| Crate | games card: Head Ball 2, Basketball Arena, Unity years |
+| Character | about card: bio, LinkedIn, website, email |
+
+Cards list entries as rows; a tapped row stays highlighted so visitors can see what they have already opened.
 
 ## How it is built
 

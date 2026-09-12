@@ -2,7 +2,7 @@
 
 Run from the project root:  python tools/gen_world.py
 
-Layout: a 2 x 2 grid of rooms, each ROOM_W x ROOM_H interior cells, separated by one-cell walls with
+Layout: a COLS x ROWS grid of rooms (currently a single room), each ROOM_W x ROOM_H interior cells, separated by one-cell walls with
 two-cell doorways. Tiles are Kenney Tiny Dungeon indices (0-based, 12 columns); Defold ids are +1.
 World units are pixels, 16 per tile; the tilemap is offset so the whole map is centred on the origin.
 
@@ -12,7 +12,7 @@ animation and local cell. Edit the tables below and re-run; do not hand-edit the
 import random
 
 ROOM_W, ROOM_H = 24, 16
-COLS, ROWS = 2, 2
+COLS, ROWS = 1, 1
 W = COLS * ROOM_W + COLS + 1
 H = ROWS * ROOM_H + ROWS + 1
 OX, OY = -W * 8, -H * 8  # tilemap component offset so the map is centred on the world origin
@@ -24,32 +24,16 @@ WALL_FACE, WALL_CAP, TORCH = 40, 58, 130
 
 # rooms keyed by (col, row); row 0 is the bottom row
 ROOMS = {
-    (0, 0): dict(name="talks", title="Talks & Podcast", floor=SAND, objects=[
+    (0, 0): dict(name="hall", title="Explore", floor=SAND, objects=[
         ("spawn_sign", "sign", (9, 6)),
-        ("talks_monitor", "monitor", (16, 10)),
-        ("podcast_radio", "podcast", (6, 10)),
-    ], decor={(2, 14): 75, (3, 14): 75, (4, 14): 63, (20, 2): 89, (21, 2): 56}),
-    (1, 0): dict(name="open_source", title="Open Source", floor=DARK, objects=[
-        ("sign_open_source", "sign", (3, 8)),
-        ("repo_tickwise", "chest", (7, 10)),
-        ("repo_jotphant", "chest", (11, 10)),
-        ("repo_hannibalui", "chest", (15, 10)),
-        ("repo_designpatterns", "chest", (19, 10)),
-        ("github_profile", "badge", (12, 4)),
-    ], decor={(20, 14): 72, (19, 14): 73, (21, 14): 73, (2, 2): 56}),
-    (0, 1): dict(name="games", title="Games", floor=SAND, objects=[
-        ("sign_games", "sign", (3, 8)),
-        ("game_headball2", "crate", (8, 10)),
-        ("game_basketball_arena", "crate", (15, 10)),
-        ("unity_years", "table", (12, 4)),
-    ], decor={(20, 14): 75, (21, 14): 75, (2, 14): 66, (21, 2): 89}),
-    (1, 1): dict(name="about", title="About & Contact", floor=DARK, objects=[
-        ("sign_about", "sign", (3, 8)),
-        ("about_bio", "person", (12, 9)),
-        ("about_linkedin", "badge", (7, 4)),
-        ("about_website", "shelf", (17, 4)),
-        ("about_email", "potion", (12, 13)),
-    ], decor={(2, 14): 72, (3, 14): 73, (20, 2): 56, (21, 2): 56}),
+        ("talks_monitor", "monitor", (17, 11)),
+        ("podcast_radio", "podcast", (5, 11)),
+        ("open_source_chest", "chest", (19, 4)),
+        ("games_crate", "crate", (4, 4)),
+        ("about_person", "person", (12, 12)),
+    ], decor={(2, 14): 75, (3, 14): 75, (20, 14): 75, (21, 14): 75,
+              (8, 3): 72, (7, 3): 73, (9, 3): 73, (16, 3): 72, (15, 3): 73, (17, 3): 73,
+              (2, 2): 56, (21, 2): 56, (1, 8): 66, (22, 8): 66}),
 }
 SPAWN_ROOM, SPAWN_CELL = (0, 0), (12, 8)
 

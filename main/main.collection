@@ -19,8 +19,8 @@ instances {
   id: "player"
   prototype: "/main/player.go"
   position {
-    x: -192.0
-    y: -128.0
+    x: 8.0
+    y: 8.0
     z: 0.1
   }
   rotation {
@@ -51,8 +51,8 @@ instances {
   id: "spawn_sign"
   prototype: "/main/interactable.go"
   position {
-    x: -240.0
-    y: -160.0
+    x: -40.0
+    y: -24.0
     z: 0.05
   }
   rotation {
@@ -75,8 +75,8 @@ instances {
   id: "talks_monitor"
   prototype: "/main/interactable.go"
   position {
-    x: -128.0
-    y: -96.0
+    x: 88.0
+    y: 56.0
     z: 0.05
   }
   rotation {
@@ -99,8 +99,8 @@ instances {
   id: "podcast_radio"
   prototype: "/main/interactable.go"
   position {
-    x: -288.0
-    y: -96.0
+    x: -104.0
+    y: 56.0
     z: 0.05
   }
   rotation {
@@ -120,11 +120,11 @@ instances {
   }
 }
 instances {
-  id: "sign_open_source"
+  id: "open_source_chest"
   prototype: "/main/interactable.go"
   position {
-    x: 64.0
-    y: -128.0
+    x: 120.0
+    y: -56.0
     z: 0.05
   }
   rotation {
@@ -138,17 +138,17 @@ instances {
     id: "script"
     properties {
       id: "content"
-      value: "sign_open_source"
+      value: "open_source_chest"
       type: PROPERTY_TYPE_HASH
     }
   }
 }
 instances {
-  id: "repo_tickwise"
+  id: "games_crate"
   prototype: "/main/interactable.go"
   position {
-    x: 128.0
-    y: -96.0
+    x: -120.0
+    y: -56.0
     z: 0.05
   }
   rotation {
@@ -162,17 +162,17 @@ instances {
     id: "script"
     properties {
       id: "content"
-      value: "repo_tickwise"
+      value: "games_crate"
       type: PROPERTY_TYPE_HASH
     }
   }
 }
 instances {
-  id: "repo_jotphant"
+  id: "about_person"
   prototype: "/main/interactable.go"
   position {
-    x: 192.0
-    y: -96.0
+    x: 8.0
+    y: 72.0
     z: 0.05
   }
   rotation {
@@ -186,295 +186,7 @@ instances {
     id: "script"
     properties {
       id: "content"
-      value: "repo_jotphant"
-      type: PROPERTY_TYPE_HASH
-    }
-  }
-}
-instances {
-  id: "repo_hannibalui"
-  prototype: "/main/interactable.go"
-  position {
-    x: 256.0
-    y: -96.0
-    z: 0.05
-  }
-  rotation {
-  }
-  scale3 {
-    x: 1.0
-    y: 1.0
-    z: 1.0
-  }
-  component_properties {
-    id: "script"
-    properties {
-      id: "content"
-      value: "repo_hannibalui"
-      type: PROPERTY_TYPE_HASH
-    }
-  }
-}
-instances {
-  id: "repo_designpatterns"
-  prototype: "/main/interactable.go"
-  position {
-    x: 320.0
-    y: -96.0
-    z: 0.05
-  }
-  rotation {
-  }
-  scale3 {
-    x: 1.0
-    y: 1.0
-    z: 1.0
-  }
-  component_properties {
-    id: "script"
-    properties {
-      id: "content"
-      value: "repo_designpatterns"
-      type: PROPERTY_TYPE_HASH
-    }
-  }
-}
-instances {
-  id: "github_profile"
-  prototype: "/main/interactable.go"
-  position {
-    x: 208.0
-    y: -192.0
-    z: 0.05
-  }
-  rotation {
-  }
-  scale3 {
-    x: 1.0
-    y: 1.0
-    z: 1.0
-  }
-  component_properties {
-    id: "script"
-    properties {
-      id: "content"
-      value: "github_profile"
-      type: PROPERTY_TYPE_HASH
-    }
-  }
-}
-instances {
-  id: "sign_games"
-  prototype: "/main/interactable.go"
-  position {
-    x: -336.0
-    y: 144.0
-    z: 0.05
-  }
-  rotation {
-  }
-  scale3 {
-    x: 1.0
-    y: 1.0
-    z: 1.0
-  }
-  component_properties {
-    id: "script"
-    properties {
-      id: "content"
-      value: "sign_games"
-      type: PROPERTY_TYPE_HASH
-    }
-  }
-}
-instances {
-  id: "game_headball2"
-  prototype: "/main/interactable.go"
-  position {
-    x: -256.0
-    y: 176.0
-    z: 0.05
-  }
-  rotation {
-  }
-  scale3 {
-    x: 1.0
-    y: 1.0
-    z: 1.0
-  }
-  component_properties {
-    id: "script"
-    properties {
-      id: "content"
-      value: "game_headball2"
-      type: PROPERTY_TYPE_HASH
-    }
-  }
-}
-instances {
-  id: "game_basketball_arena"
-  prototype: "/main/interactable.go"
-  position {
-    x: -144.0
-    y: 176.0
-    z: 0.05
-  }
-  rotation {
-  }
-  scale3 {
-    x: 1.0
-    y: 1.0
-    z: 1.0
-  }
-  component_properties {
-    id: "script"
-    properties {
-      id: "content"
-      value: "game_basketball_arena"
-      type: PROPERTY_TYPE_HASH
-    }
-  }
-}
-instances {
-  id: "unity_years"
-  prototype: "/main/interactable.go"
-  position {
-    x: -192.0
-    y: 80.0
-    z: 0.05
-  }
-  rotation {
-  }
-  scale3 {
-    x: 1.0
-    y: 1.0
-    z: 1.0
-  }
-  component_properties {
-    id: "script"
-    properties {
-      id: "content"
-      value: "unity_years"
-      type: PROPERTY_TYPE_HASH
-    }
-  }
-}
-instances {
-  id: "sign_about"
-  prototype: "/main/interactable.go"
-  position {
-    x: 64.0
-    y: 144.0
-    z: 0.05
-  }
-  rotation {
-  }
-  scale3 {
-    x: 1.0
-    y: 1.0
-    z: 1.0
-  }
-  component_properties {
-    id: "script"
-    properties {
-      id: "content"
-      value: "sign_about"
-      type: PROPERTY_TYPE_HASH
-    }
-  }
-}
-instances {
-  id: "about_bio"
-  prototype: "/main/interactable.go"
-  position {
-    x: 208.0
-    y: 160.0
-    z: 0.05
-  }
-  rotation {
-  }
-  scale3 {
-    x: 1.0
-    y: 1.0
-    z: 1.0
-  }
-  component_properties {
-    id: "script"
-    properties {
-      id: "content"
-      value: "about_bio"
-      type: PROPERTY_TYPE_HASH
-    }
-  }
-}
-instances {
-  id: "about_linkedin"
-  prototype: "/main/interactable.go"
-  position {
-    x: 128.0
-    y: 80.0
-    z: 0.05
-  }
-  rotation {
-  }
-  scale3 {
-    x: 1.0
-    y: 1.0
-    z: 1.0
-  }
-  component_properties {
-    id: "script"
-    properties {
-      id: "content"
-      value: "about_linkedin"
-      type: PROPERTY_TYPE_HASH
-    }
-  }
-}
-instances {
-  id: "about_website"
-  prototype: "/main/interactable.go"
-  position {
-    x: 288.0
-    y: 80.0
-    z: 0.05
-  }
-  rotation {
-  }
-  scale3 {
-    x: 1.0
-    y: 1.0
-    z: 1.0
-  }
-  component_properties {
-    id: "script"
-    properties {
-      id: "content"
-      value: "about_website"
-      type: PROPERTY_TYPE_HASH
-    }
-  }
-}
-instances {
-  id: "about_email"
-  prototype: "/main/interactable.go"
-  position {
-    x: 208.0
-    y: 224.0
-    z: 0.05
-  }
-  rotation {
-  }
-  scale3 {
-    x: 1.0
-    y: 1.0
-    z: 1.0
-  }
-  component_properties {
-    id: "script"
-    properties {
-      id: "content"
-      value: "about_email"
+      value: "about_person"
       type: PROPERTY_TYPE_HASH
     }
   }

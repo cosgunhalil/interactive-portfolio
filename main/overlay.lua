@@ -1,6 +1,8 @@
 --- DOM overlay above the game canvas, driven through html5.run().
--- Videos and playlists use the real YouTube player (a playlist embed plays the whole series). Links show a card with an "open in new tab" anchor,
--- because most sites refuse to be iframed. Text shows a card.
+-- Videos and playlists use the real YouTube player (a playlist embed plays the whole series).
+-- Links show a card with an "open in new tab" anchor, because most sites refuse to be iframed.
+-- Text shows a card. "card" shows a title, an intro and a list of tappable rows; a tapped row
+-- turns the accent colour and stays that way for the rest of the visit (window.__tw_visited).
 -- Closes on backdrop click, Escape, or the close button; JS sets window.__tw_overlay_open
 -- to false and Lua polls it in update() to restore input.
 -- Outside HTML5 (the editor) the overlay is simulated so the input gate can still be tested.
@@ -14,6 +16,21 @@ local JS = [==[
 	if (document.getElementById('tw-overlay')) { return; }
 	var d = TW_DATA;
 	window.__tw_overlay_open = true;
+
+	if (!document.getElementById('tw-style')) {
+		var st = document.createElement('style');
+		st.id = 'tw-style';
+		st.textContent =
+			'.tw-row{display:block;background:#2a2f37;color:#f3f4f6;text-decoration:none;border-radius:10px;' +
+			'padding:12px 14px;margin:8px 0;cursor:pointer;border:0;width:100%;text-align:left;font:inherit;' +
+			'transition:background .15s;}' +
+			'.tw-row:hover{background:#353b45;}' +
+			'.tw-row:active,.tw-row.tw-visited{background:#38a3e4;color:#fff;}' +
+			'.tw-row b{display:block;font-size:17px;}' +
+			'.tw-row span{display:block;opacity:.8;font-size:14px;margin-top:2px;word-break:break-word;}';
+		document.head.appendChild(st);
+	}
+	window.__tw_visited = window.__tw_visited || {};
 
 	var wrap = document.createElement('div');
 	wrap.id = 'tw-overlay';
@@ -37,7 +54,35 @@ local JS = [==[
 		h.textContent = d.title;
 		h.style.cssText = 'margin:0 0 12px;font-size:20px;';
 		panel.appendChild(h);
-		if (d.type === 'link') {
+		if (d.type === 'card') {
+			panel.style.maxWidth = '560px';
+			panel.style.maxHeight = '85vh';
+			panel.style.overflowY = 'auto';
+			if (d.payload.text) {
+				var intro = document.createElement('p');
+				intro.textContent = d.payload.text;
+				intro.style.cssText = 'margin:0 0 14px;opacity:.85;';
+				panel.appendChild(intro);
+			}
+			(d.payload.entries || []).forEach(function (e, i) {
+				var key = d.title + '/' + i;
+				var row = document.createElement(e.url ? 'a' : 'button');
+				row.className = 'tw-row' + (window.__tw_visited[key] ? ' tw-visited' : '');
+				if (e.url) { row.href = e.url; row.target = '_blank'; row.rel = 'noopener'; } else { row.type = 'button'; }
+				var b = document.createElement('b');
+				b.textContent = e.label;
+				row.appendChild(b);
+				if (e.note) {
+					var n = document.createElement('span');
+					n.textContent = e.note;
+					row.appendChild(n);
+				}
+				var mark = function () { window.__tw_visited[key] = true; row.classList.add('tw-visited'); };
+				row.addEventListener('touchstart', mark, { passive: true });
+				row.addEventListener('click', mark);
+				panel.appendChild(row);
+			});
+		} else if (d.type === 'link') {
 			var p = document.createElement('p');
 			p.textContent = d.payload;
 			p.style.cssText = 'word-break:break-all;opacity:.75;margin:0 0 16px;';
