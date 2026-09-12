@@ -17,7 +17,8 @@ Live: `https://<user>.github.io/interactive-portfolio/`
 
 Open `game.project` in the Defold editor (1.13.1). `Project > Build` runs the game locally.
 
-Command-line build with [bob](https://defold.com/manuals/bob/), matching the engine version:
+Command-line build with [bob](https://defold.com/manuals/bob/), matching the engine version. Requires Java 25
+(the editor ships one under `packages/jdk-25+36`):
 
 ```bash
 curl -L -o bob.jar https://d.defold.com/archive/stable/574678c7d44be490d874fbed2d0ae6211feec4d9/bob/bob.jar
