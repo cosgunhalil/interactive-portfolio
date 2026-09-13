@@ -8,7 +8,7 @@ local VIEW_SHORT_SIDE = 256 -- world px (16 tiles) to fit along the window's sho
 -- Idle demo: after this many seconds without any input at start, the character walks to
 -- DEMO_TARGET on its own until the prompt shows. Any real input cancels it for good.
 local DEMO_DELAY = 6
-local DEMO_TARGET = "/talks_monitor"
+local DEMO_TARGET = "/youtube"
 local DEMO_STOP_DISTANCE = 30 -- inside the interactable radius (40), so the prompt appears
 
 local ACTION_UP = hash("up")

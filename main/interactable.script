@@ -1,6 +1,12 @@
--- Generic interactable. Its `content` property names an entry in main/content.lua.
--- Each frame it checks the distance to the player and tells the player when it enters or
--- leaves range. When the player activates it, it opens the overlay for its content item.
+-- Generic interactable, drawn as a treasure chest. Its `content` property names an entry in
+-- main/content.lua. Each frame it checks the distance to the player and tells the player when it
+-- enters or leaves range. On `activate` it plays the opening animation, then opens the overlay for
+-- its content; when the overlay closes the chest closes again.
+--
+-- Idle: every 2 to 5 seconds (rolled at runtime, per chest, re-rolled after each play) the chest
+-- plays a short idle flipbook with a little squash so the room feels alive.
+--
+-- States: "closed" (waiting for the idle timer), "idle", "opening", "open" (overlay up), "closing".
 
 local content = require("main.content")
 local overlay = require("main.overlay")
@@ -11,17 +17,60 @@ go.property("radius", 40)
 local PLAYER_GO = "/player"
 local PLAYER_SCRIPT = "/player#script"
 local MSG_ACTIVATE = hash("activate")
+local SPRITE = "#sprite"
+
+local ANIM_CLOSED = hash("chest_closed")
+local ANIM_IDLE = hash("chest_idle")
+local ANIM_OPEN = hash("chest_open")
+local ANIM_CLOSE = hash("chest_close")
+
+local IDLE_MIN, IDLE_MAX = 2, 5
+
+-- Seed once per Lua state (shared_state = 1) so every chest gets a different timer.
+local seeded = false
+local function seed_once()
+	if not seeded then
+		seeded = true
+		math.randomseed(os.time() + math.floor(os.clock() * 1000))
+	end
+end
+
+local function set_closed(self)
+	self.state = "closed"
+	sprite.play_flipbook(SPRITE, ANIM_CLOSED)
+	self.idle_timer = IDLE_MIN + math.random() * (IDLE_MAX - IDLE_MIN)
+end
+
+local function play_idle(self)
+	self.state = "idle"
+	local scale = go.get_scale()
+	go.animate(".", "scale.y", go.PLAYBACK_ONCE_PINGPONG, scale.y * 0.86, go.EASING_OUTQUAD, 0.14)
+	go.animate(".", "scale.x", go.PLAYBACK_ONCE_PINGPONG, scale.x * 1.10, go.EASING_OUTQUAD, 0.14)
+	sprite.play_flipbook(SPRITE, ANIM_IDLE, set_closed)
+end
+
+local function open_chest(self)
+	self.state = "opening"
+	sprite.play_flipbook(SPRITE, ANIM_OPEN, function(self)
+		self.state = "open"
+		overlay.open(self.item)
+	end)
+end
+
+local function close_chest(self)
+	self.state = "closing"
+	sprite.play_flipbook(SPRITE, ANIM_CLOSE, set_closed)
+end
 
 function init(self)
+	seed_once()
 	self.item = content.get(self.content)
 	if not self.item then
 		print("interactable: no content entry for", go.get_id(), self.content)
 		return
 	end
-	if self.item.anim then
-		sprite.play_flipbook("#sprite", self.item.anim)
-	end
 	self.near = false
+	set_closed(self)
 end
 
 function update(self, dt)
@@ -38,10 +87,22 @@ function update(self, dt)
 			msg.post(PLAYER_SCRIPT, "interact_exit")
 		end
 	end
+
+	if self.state == "closed" then
+		self.idle_timer = self.idle_timer - dt
+		if self.idle_timer <= 0 then
+			play_idle(self)
+		end
+	elseif self.state == "open" and not overlay.is_open() then
+		close_chest(self)
+	end
 end
 
 function on_message(self, message_id, message, sender)
-	if message_id == MSG_ACTIVATE and self.item then
-		overlay.open(self.item)
+	if message_id == MSG_ACTIVATE and self.item and (self.state == "closed" or self.state == "idle") then
+		go.cancel_animations(".", "scale.x")
+		go.cancel_animations(".", "scale.y")
+		go.set_scale(1)
+		open_chest(self)
 	end
 end

@@ -2,7 +2,7 @@
 
 A walkable portfolio built with [Defold](https://defold.com). The visitor controls a character who walks through
 one room; each object is a chapter of a career, and interacting with it opens the real content behind it:
-talks and a podcast on YouTube, repositories on GitHub, notes from the resume, and contact links.
+the YouTube channel, the podcast on Spotify, LinkedIn, and GitHub.
 
 Live: `https://cosgunhalil.github.io/interactive-portfolio/`
 
@@ -15,18 +15,16 @@ Live: `https://cosgunhalil.github.io/interactive-portfolio/`
 
 ## The room
 
-One room, six things to walk up to:
+One room, four chests. Walk up, press E or tap the button, the chest opens and a card offers the link:
 
-| Object | Opens |
+| Chest | Opens |
 |---|---|
-| Notice board | welcome and how to play |
-| Screen | presentations playlist (YouTube) |
-| Framed box | podcast playlist (YouTube) |
-| Chest | open source card: repositories on GitHub |
-| Crate | games card: Head Ball 2, Basketball Arena, Unity years |
-| Character | about card: bio, LinkedIn, website, email |
+| YouTube | youtube.com/@halilcosgun |
+| Podcast | the show on Spotify |
+| LinkedIn | linkedin.com/in/halilcosgun |
+| GitHub | github.com/cosgunhalil |
 
-Cards list entries as rows; a tapped row stays highlighted so visitors can see what they have already opened.
+Chests idle on their own every few seconds and animate open and closed around the overlay.
 
 ## How it is built
 

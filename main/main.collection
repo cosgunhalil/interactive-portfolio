@@ -48,31 +48,7 @@ instances {
   }
 }
 instances {
-  id: "spawn_sign"
-  prototype: "/main/interactable.go"
-  position {
-    x: -40.0
-    y: -24.0
-    z: 0.05
-  }
-  rotation {
-  }
-  scale3 {
-    x: 1.0
-    y: 1.0
-    z: 1.0
-  }
-  component_properties {
-    id: "script"
-    properties {
-      id: "content"
-      value: "spawn_sign"
-      type: PROPERTY_TYPE_HASH
-    }
-  }
-}
-instances {
-  id: "talks_monitor"
+  id: "youtube"
   prototype: "/main/interactable.go"
   position {
     x: 88.0
@@ -90,13 +66,13 @@ instances {
     id: "script"
     properties {
       id: "content"
-      value: "talks_monitor"
+      value: "youtube"
       type: PROPERTY_TYPE_HASH
     }
   }
 }
 instances {
-  id: "podcast_radio"
+  id: "spotify"
   prototype: "/main/interactable.go"
   position {
     x: -104.0
@@ -114,13 +90,13 @@ instances {
     id: "script"
     properties {
       id: "content"
-      value: "podcast_radio"
+      value: "spotify"
       type: PROPERTY_TYPE_HASH
     }
   }
 }
 instances {
-  id: "open_source_chest"
+  id: "github"
   prototype: "/main/interactable.go"
   position {
     x: 120.0
@@ -138,37 +114,13 @@ instances {
     id: "script"
     properties {
       id: "content"
-      value: "open_source_chest"
+      value: "github"
       type: PROPERTY_TYPE_HASH
     }
   }
 }
 instances {
-  id: "games_crate"
-  prototype: "/main/interactable.go"
-  position {
-    x: -120.0
-    y: -56.0
-    z: 0.05
-  }
-  rotation {
-  }
-  scale3 {
-    x: 1.0
-    y: 1.0
-    z: 1.0
-  }
-  component_properties {
-    id: "script"
-    properties {
-      id: "content"
-      value: "games_crate"
-      type: PROPERTY_TYPE_HASH
-    }
-  }
-}
-instances {
-  id: "about_person"
+  id: "linkedin"
   prototype: "/main/interactable.go"
   position {
     x: 8.0
@@ -186,7 +138,7 @@ instances {
     id: "script"
     properties {
       id: "content"
-      value: "about_person"
+      value: "linkedin"
       type: PROPERTY_TYPE_HASH
     }
   }
